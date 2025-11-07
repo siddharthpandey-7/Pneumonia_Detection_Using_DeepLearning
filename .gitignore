@@ -1,0 +1,22 @@
+# Ignore virtual environment
+venv/
+
+# Ignore model files
+*.h5
+*.hdf5
+*.pkl
+*.pt
+*.joblib
+
+# Ignore temporary files
+uploads/
+__pycache__/
+*.ipynb_checkpoints
+
+# Ignore datasets if added in future
+dataset/
+data/
+chest_xray/
+
+# System files
+.DS_Store
