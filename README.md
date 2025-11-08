@@ -74,7 +74,7 @@ TensorFlow 2.18.0
    
    ⚠️ **IMPORTANT**: The model file is too large for GitHub and must be downloaded separately.
    
-   🔗 **[Download best_vgg19_pneumonia.h5 from Google Drive](YOUR_GOOGLE_DRIVE_LINK_HERE)**
+   🔗 **[Download best_vgg19_pneumonia.h5 from Google Drive](https://drive.google.com/file/d/1g-M2JrvOxpNCr4hsHJUpqW7EHv3BkYgn/view?usp=drive_link)**
    
    After downloading:
    - Place `best_vgg19_pneumonia.h5` in the root directory
