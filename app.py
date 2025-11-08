@@ -5,18 +5,18 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import numpy as np
 
-# --- Initialize Flask app ---
+# Initialize Flask app
 app = Flask(__name__)
 
-# Folder for uploaded images
+# Folder to store uploaded images
 UPLOAD_FOLDER = 'static/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# --- Google Drive model details ---
+# --- Google Drive Model Setup ---
 MODEL_PATH = "best_vgg19_pneumonia.h5"
 GOOGLE_DRIVE_LINK = "https://drive.google.com/uc?export=download&id=1g-M2JrvOxpNCr4hsHJUpqW7EHv3BkYgn"
 
-# --- Function to download model from Google Drive ---
+# Function to download model safely
 def download_model():
     print("🧠 Model not found locally. Downloading from Google Drive...")
     response = requests.get(GOOGLE_DRIVE_LINK, stream=True)
@@ -26,23 +26,21 @@ def download_model():
                 f.write(chunk)
     print("✅ Model downloaded successfully!")
 
-# --- Download model if not found ---
+# --- Check and download model if not found ---
 if not os.path.exists(MODEL_PATH):
     download_model()
 
-# --- Verify model file integrity ---
-if os.path.getsize(MODEL_PATH) < 1000000:  # less than 1MB means it's invalid (HTML file)
-    raise RuntimeError(
-        "❌ Model download failed. File is too small or invalid.\n"
-        "👉 Please ensure the file is shared as 'Anyone with the link' in Google Drive."
-    )
+# --- Validate model file (should not be empty or invalid HTML) ---
+if os.path.getsize(MODEL_PATH) < 1000000:  # Less than 1 MB = invalid model
+    raise RuntimeError("❌ Model download failed — file too small or invalid. "
+                       "Please ensure the file is shared as 'Anyone with the link' in Google Drive.")
 
-# --- Load the trained model ---
+# --- Load Model ---
 print("🔄 Loading model...")
 model = load_model(MODEL_PATH)
 print("✅ Model loaded successfully!")
 
-# --- Class labels (same order as training) ---
+# Class names
 class_names = ['NORMAL', 'PNEUMONIA']
 
 # --- Routes ---
@@ -59,25 +57,24 @@ def predict():
     if file.filename == '':
         return "No file selected", 400
 
-    # Save uploaded image
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
 
-    # Preprocess image for model
+    # Preprocess the image
     img = image.load_img(filepath, target_size=(128, 128))
-    img_array = np.expand_dims(image.img_to_array(img), axis=0) / 255.0
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0) / 255.0
 
     # Predict
     prediction = model.predict(img_array)
     predicted_class = class_names[np.argmax(prediction[0])]
     confidence = round(100 * np.max(prediction[0]), 2)
 
-    return render_template(
-        'result.html',
-        filename=file.filename,
-        prediction=predicted_class,
-        confidence=confidence
-    )
+    return render_template('result.html',
+                           filename=file.filename,
+                           prediction=predicted_class,
+                           confidence=confidence)
 
+# Run app
 if __name__ == "__main__":
     app.run(debug=True)
