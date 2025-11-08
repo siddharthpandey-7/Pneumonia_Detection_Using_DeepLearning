@@ -615,7 +615,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For questions, issues, or contributions:
 - **Issues**: [GitHub Issues](https://github.com/yourusername/pneumonia-detection/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/yourusername/pneumonia-detection/discussions)
-- **Email**: your.email@example.com
+- **Email**: siddharthpandey97825@gmail.com
 
 ## 📚 References
 
