@@ -7,9 +7,9 @@ import numpy as np
 
 app = Flask(__name__)
 
-# ------------------ MODEL CONFIG ------------------
-MODEL_URL = "https://huggingface.co/siddharthpandey7/pneumonia-model/resolve/main/best_vgg19_pneumonia.h5"
-MODEL_PATH = "best_vgg19_pneumonia.h5"
+# ------------------ MODEL DOWNLOAD CONFIG ------------------
+MODEL_URL = "https://huggingface.co/siddharthpandey7/pneumonia-model/resolve/main/best_vgg19_pneumonia.keras"
+MODEL_PATH = "best_vgg19_pneumonia.keras"
 
 def download_model():
     """Download model from Hugging Face if not already present."""
@@ -27,7 +27,7 @@ def download_model():
 # ------------------ LOAD MODEL ------------------
 model = None
 def get_model():
-    """Load the model into memory once."""
+    """Lazy load model (only once)."""
     global model
     if model is None:
         download_model()
@@ -56,17 +56,21 @@ def predict():
         img = np.array(img) / 255.0
         img = np.expand_dims(img, axis=0)
 
-        # Prediction
+        # Get prediction
         model_instance = get_model()
         preds = model_instance.predict(img)
 
-        # Interpret prediction
-        prob = float(preds[0][1]) if preds.shape[-1] == 2 else float(preds[0][0])
+        # Handle binary output [Normal, Pneumonia]
+        if preds.shape[-1] == 2:
+            prob = float(preds[0][1])  # pneumonia class
+        else:
+            prob = float(preds[0][0])  # binary sigmoid
+
         result = "PNEUMONIA DETECTED" if prob > 0.5 else "NORMAL"
         confidence = round(prob * 100 if prob > 0.5 else (1 - prob) * 100, 2)
 
         print(f"Prediction: {result} ({confidence}%)")
-        return render_template("result.html", prediction=result, confidence=confidence, filename=file.filename)
+        return render_template("result.html", prediction=result, confidence=confidence)
 
     except Exception as e:
         print("Prediction error:", e)
