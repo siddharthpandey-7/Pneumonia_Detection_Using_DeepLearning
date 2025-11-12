@@ -59,8 +59,8 @@ def predict():
         return "No selected file", 400
 
     try:
-        # Load and preprocess image
-        img = Image.open(file).convert("RGB").resize((224, 224))
+        # ✅ FIXED INPUT SHAPE (changed from 224x224 → 128x128)
+        img = Image.open(file).convert("RGB").resize((128, 128))
         img = np.array(img) / 255.0
         img = np.expand_dims(img, axis=0)
         print("✅ Image preprocessed:", img.shape)
@@ -69,7 +69,7 @@ def predict():
         prediction = model.predict(img)
         print("🧠 Raw model output:", prediction)
 
-        # Handle various output formats (binary or categorical)
+        # Handle single neuron or 2-class output
         if prediction.ndim == 2 and prediction.shape[1] == 1:
             prob = float(prediction[0][0])
             result = "PNEUMONIA DETECTED" if prob > 0.5 else "NORMAL"
