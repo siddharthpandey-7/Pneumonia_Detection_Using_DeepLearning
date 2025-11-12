@@ -8,13 +8,15 @@ import numpy as np
 
 app = Flask(__name__)
 
+# ✅ Hugging Face model link
 MODEL_URL = "https://huggingface.co/siddharthpandey7/pneumonia-model/resolve/main/best_vgg19_pneumonia.h5"
 MODEL_PATH = "best_vgg19_pneumonia.h5"
 
 # ------------------ DOWNLOAD MODEL --------------------
 def download_model():
+    """Download the model from Hugging Face if not already present."""
     if not os.path.exists(MODEL_PATH) or os.path.getsize(MODEL_PATH) < 100000:
-        print("✅ Downloading model from Hugging Face...")
+        print("🧠 Downloading model from Hugging Face...")
         response = requests.get(MODEL_URL, stream=True)
 
         if response.status_code == 200:
@@ -31,7 +33,7 @@ download_model()
 
 try:
     model = load_model(MODEL_PATH)
-    print("✅ Loaded model successfully!")
+    print("✅ Model loaded successfully!")
 except Exception as e:
     print("❌ Error loading model:", e)
     raise e
@@ -39,20 +41,33 @@ except Exception as e:
 # ------------------ ROUTES --------------------
 @app.route("/")
 def index():
+    """Home page route."""
     return render_template("index.html")
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    file = request.files["image"]
-    img = Image.open(file).convert("RGB").resize((224, 224))
-    img = np.array(img) / 255.0
-    img = np.expand_dims(img, axis=0)
+    """Handle image upload and model prediction."""
+    if 'file' not in request.files:
+        return "No file uploaded", 400
 
-    prediction = model.predict(img)[0][0]
+    file = request.files["file"]
+    if file.filename == "":
+        return "No selected file", 400
 
-    result = "PNEUMONIA DETECTED" if prediction > 0.5 else "NORMAL"
+    try:
+        img = Image.open(file).convert("RGB").resize((224, 224))
+        img = np.array(img) / 255.0
+        img = np.expand_dims(img, axis=0)
 
-    return render_template("result.html", result=result)
+        prediction = model.predict(img)[0][0]
+        result = "PNEUMONIA DETECTED" if prediction > 0.5 else "NORMAL"
+
+        return render_template("result.html", result=result)
+    except Exception as e:
+        print("❌ Prediction error:", e)
+        return "Error during prediction", 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # ✅ Important for Render — use 0.0.0.0 and port from env
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
