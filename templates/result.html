@@ -8,17 +8,18 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">🧠 Scan Result</h1>
+        <h1 class="title">Scan Result</h1>
 
         <div class="result-box">
-            <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Uploaded X-ray" class="result-img">
+            <img src="{{ img_data }}" alt="Uploaded X-ray" class="result-img">
 
             <div class="prediction-box">
                 <h2>Prediction: 
-                    <span class="prediction {{ 'positive' if prediction == 'PNEUMONIA' else 'negative' }}">
+                    <span class="prediction {{ 'positive' if prediction == 'PNEUMONIA DETECTED' else 'negative' }}">
                         {{ prediction }}
                     </span>
                 </h2>
+
                 <div class="confidence-bar">
                     <div class="fill" style="width: {{ confidence }}%"></div>
                 </div>
@@ -30,12 +31,3 @@
     </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
