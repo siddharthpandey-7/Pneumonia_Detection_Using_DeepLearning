@@ -1,100 +1,80 @@
-import os
-import io
-import base64
-import requests
-from flask import Flask, render_template, request
-from tensorflow.keras.models import load_model
-from PIL import Image
+from flask import Flask, render_template, request, send_from_directory
 import numpy as np
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+import requests, os, io
+from PIL import Image
 
 app = Flask(__name__)
 
-# ------------------ MODEL DOWNLOAD CONFIG ------------------
+# -------------------- MODEL DOWNLOAD --------------------
 MODEL_URL = "https://huggingface.co/siddharthpandey7/pneumonia-model/resolve/main/best_vgg19_pneumonia.keras"
-MODEL_PATH = "best_vgg19_pneumonia.keras"
-
+MODEL_PATH = "model.keras"
 
 def download_model():
-    """Download model from HuggingFace if not present."""
-    if not os.path.exists(MODEL_PATH) or os.path.getsize(MODEL_PATH) < 50000000:
+    if not os.path.exists(MODEL_PATH):
         print("Downloading model from HuggingFace...")
-        response = requests.get(MODEL_URL, stream=True)
-        if response.status_code == 200:
-            with open(MODEL_PATH, "wb") as f:
-                for chunk in response.iter_content(8192):
-                    f.write(chunk)
-            print("Model downloaded successfully.")
-        else:
-            raise Exception("Failed to download model.")
+        r = requests.get(MODEL_URL)
+        with open(MODEL_PATH, "wb") as f:
+            f.write(r.content)
+        print("Model downloaded successfully.")
 
+download_model()
 
-model = None
+print("Loading model...")
+model = load_model(MODEL_PATH, compile=False)
+print("Model loaded.")
 
-
-def get_model():
-    """Loads the model only once."""
-    global model
-    if model is None:
-        download_model()
-        print("Loading model...")
-        model = load_model(MODEL_PATH, compile=False)
-        print("Model loaded successfully.")
-    return model
-
+IMG_SIZE = (128, 128)
 
 @app.route("/")
-def index():
+def home():
     return render_template("index.html")
-
 
 @app.route("/predict", methods=["POST"])
 def predict():
     if "file" not in request.files:
-        return "No file uploaded", 400
+        return render_template("result.html", prediction="No file uploaded")
 
     file = request.files["file"]
     if file.filename == "":
-        return "No selected file", 400
+        return render_template("result.html", prediction="No file selected")
 
-    try:
-        # Preprocess image
-        image = Image.open(file).convert("RGB")
-        image_resized = image.resize((128, 128))
-        arr = np.array(image_resized) / 255.0
-        arr = np.expand_dims(arr, axis=0)
+    # Save to /tmp folder (Render allows only this)
+    file_path = os.path.join("/tmp", file.filename)
+    file.save(file_path)
 
-        model_instance = get_model()
-        preds = model_instance.predict(arr)
+    # Preprocess
+    img = load_img(file_path, target_size=IMG_SIZE)
+    img_arr = img_to_array(img) / 255.0
+    img_arr = np.expand_dims(img_arr, axis=0)
 
-        # Softmax output shape → [Normal, Pneumonia]
-        if preds.shape[-1] == 2:
-            pneumonia_prob = float(preds[0][1])
-        else:
-            pneumonia_prob = float(preds[0][0])
+    prediction = model.predict(img_arr)[0]  # [normal_prob, pneumonia_prob]
+    normal_prob, pneumonia_prob = prediction
 
-        result = "PNEUMONIA DETECTED" if pneumonia_prob > 0.5 else "NORMAL"
-        confidence = round(
-            pneumonia_prob * 100 if pneumonia_prob > 0.5 else (1 - pneumonia_prob) * 100, 2
-        )
+    if pneumonia_prob > normal_prob:
+        label = "PNEUMONIA"
+        confidence = pneumonia_prob * 100
+    else:
+        label = "NORMAL"
+        confidence = normal_prob * 100
 
-        # Convert uploaded image to base64
-        buffer = io.BytesIO()
-        image.save(buffer, format="PNG")
-        img_encoded = base64.b64encode(buffer.getvalue()).decode("utf-8")
-        img_data = f"data:image/png;base64,{img_encoded}"
+    confidence = round(confidence, 2)
 
-        return render_template(
-            "result.html",
-            prediction=result,
-            confidence=confidence,
-            img_data=img_data
-        )
+    return render_template(
+        "result.html",
+        prediction=label,
+        confidence=confidence,
+        filename=file.filename,
+    )
 
-    except Exception as e:
-        print("Prediction error:", e)
-        return f"Error during prediction: {str(e)}", 500
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory("/tmp", filename)
 
+@app.route("/health")
+def health():
+    return "OK", 200
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run()
