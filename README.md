@@ -2,7 +2,6 @@
 
 An end-to-end Deep Learning–based web application for detecting pneumonia from chest X-ray images using CNN transfer learning with VGG19. The trained model is deployed using Flask to provide real-time image predictions with confidence scores.
 
-⚠️ **This project is for educational and research purposes only and is not intended for clinical use.**
 
 ## 📌 Project Overview
 
@@ -143,6 +142,20 @@ http://localhost:8080
 - Matplotlib, Seaborn
 - HTML, CSS, JavaScript
 
+
+## 📬 Support
+
+For questions, feedback, or contributions:
+
+- **GitHub Issues**: [Open an issue](https://github.com/yourusername/pneumonia-detection/issues)
+- **Email**: your.email@example.com
+- **LinkedIn**: [Your Name](https://linkedin.com/in/yourprofile)
+
+Feel free to ⭐ this repository if you find it helpful!
+
+
 ## ⚠️ Disclaimer
 
 This project is not a medical device and should not be used for real-world diagnosis. It is intended strictly for learning, experimentation, and ML practice.
+
+**Built with ❤️ for better healthcare through AI**
