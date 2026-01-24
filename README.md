@@ -147,7 +147,7 @@ http://localhost:8080
 
 For questions, feedback, or contributions:
 
-- **GitHub Issues**: [Open an issue](https://github.com/yourusername/pneumonia-detection/issues)
+- **GitHub**: ('https://github.com/siddharthpandey-7/Pneumonia_Detection_Using_DeepLearning.git')
 - **Email**: your.email@example.com
 - **LinkedIn**: [Your Name](https://linkedin.com/in/yourprofile)
 
