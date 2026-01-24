@@ -148,8 +148,8 @@ http://localhost:8080
 For questions, feedback, or contributions:
 
 - **GitHub**: ('https://github.com/siddharthpandey-7/Pneumonia_Detection_Using_DeepLearning.git')
-- **Email**: your.email@example.com
-- **LinkedIn**: [Your Name](https://linkedin.com/in/yourprofile)
+- **Email**: siddharthpandey97825@gmail.com
+- **LinkedIn**: (https://www.linkedin.com/in/siddharth-kumar-pandey-003065343/)
 
 Feel free to ⭐ this repository if you find it helpful!
 
