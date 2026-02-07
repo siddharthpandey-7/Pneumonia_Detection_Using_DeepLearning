@@ -8,7 +8,12 @@ import requests
 import os
 from io import BytesIO
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder="templates",
+    static_folder="static"
+)
+
 
 # -------------------- HuggingFace Model --------------------
 MODEL_URL = "https://huggingface.co/siddharthpandey7/pneumonia-model/resolve/main/best_vgg19_pneumonia.h5"
