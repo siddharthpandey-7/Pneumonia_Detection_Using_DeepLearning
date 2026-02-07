@@ -168,7 +168,7 @@ pneumonia-detection/
 - **Email**: siddharthpandey97825@gmail.com
 - **LinkedIn**: https://www.linkedin.com/in/siddharth-kumar-pandey-003065343/
 
-Feel free to ⭐ this repository if you find it helpful!
+If you find this project helpful, please consider giving it a ⭐!
 
 ---
 
