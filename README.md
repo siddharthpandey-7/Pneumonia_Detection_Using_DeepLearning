@@ -145,8 +145,6 @@ pneumonia-detection/
 └── README.md
 ```
 
-> ⚠️ Trained model files are **not stored in the repo** and are fetched from the Hugging Face Hub at runtime.
-
 ---
 
 ## 🛠️ Tools & Technologies
@@ -173,10 +171,5 @@ pneumonia-detection/
 Feel free to ⭐ this repository if you find it helpful!
 
 ---
-
-## ⚠️ Disclaimer
-
-This project is **not a medical device** and must **not** be used for real-world diagnosis.  
-It is intended strictly for **learning, experimentation, and ML practice**.
 
 **Built with ❤️ for learning and applied AI in healthcare**
