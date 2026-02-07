@@ -1,20 +1,33 @@
 # 🩺 Pneumonia Detection Using Deep Learning
 
-An end-to-end Deep Learning–based web application for detecting pneumonia from chest X-ray images using CNN transfer learning with VGG19. The trained model is deployed using Flask to provide real-time image predictions with confidence scores.
+An end-to-end Deep Learning–based web application for detecting pneumonia from chest X-ray images using CNN transfer learning with **VGG19**.  
+The trained model is deployed as a **Flask web application** using **Docker** on **Hugging Face Spaces (Free CPU tier)**, enabling real-time predictions with confidence scores.
 
+---
+
+## 🚀 Live Demo
+
+🔗 **Deployed Application (Free):**  
+https://siddharthpandey7-pneumonia-detection-flask.hf.space
+
+> ⚠️ Note: The app may take 30–60 seconds to load on first request due to cold start (free-tier behavior).
+
+---
 
 ## 📌 Project Overview
 
-This project demonstrates the complete machine learning workflow:
+This project demonstrates a complete **machine learning lifecycle**:
 
-**Dataset → Preprocessing → CNN Training → Evaluation → Model Saving → Deployment → Prediction**
+**Dataset → Preprocessing → CNN Training → Evaluation → Model Saving → Deployment → Inference**
 
-A convolutional neural network based on VGG19 (ImageNet pretrained) is trained on chest X-ray images to classify scans into:
+A convolutional neural network based on **VGG19 (ImageNet pretrained)** is trained on chest X-ray images to classify scans into:
 
 - **NORMAL**
 - **PNEUMONIA**
 
-The trained model is integrated into a Flask web application where users can upload an X-ray image and instantly view the prediction.
+The trained model is integrated into a Flask-based web application where users can upload an X-ray image and instantly view predictions along with confidence scores.
+
+---
 
 ## 🎯 Key Features
 
@@ -22,10 +35,13 @@ The trained model is integrated into a Flask web application where users can upl
 - Transfer learning with **VGG19**
 - Two-phase training: frozen base model + fine-tuning
 - Final test accuracy **~91.7%**
-- High pneumonia recall (**~95%**), important for medical screening
-- Real-time inference using **Flask**
-- Clear separation between training and inference
-- Simple and user-friendly web interface
+- High pneumonia recall (**~95%**), critical for medical screening tasks
+- Real-time inference via **Flask**
+- Model served from **Hugging Face Hub** (no local model storage)
+- Deployed using **Docker** on **Hugging Face Spaces (Free CPU tier)**
+- Simple, clean, and user-friendly web interface
+
+---
 
 ## 📊 Dataset
 
@@ -41,21 +57,25 @@ The trained model is integrated into a Flask web application where users can upl
 | Validation | 8      | 8         | 16    |
 | Test       | 234    | 390       | 624   |
 
-**Note**: The validation set is small; therefore, final performance assessment is based mainly on the test set.
+> **Note**: Due to the small validation set, final performance is primarily evaluated on the test set.
+
+---
 
 ## 🔄 Data Preprocessing
 
 - Resize images to **128 × 128**
 - Convert grayscale images to 3-channel RGB
 - Normalize pixel values to [0, 1]
-- Apply data augmentation during training (rotation, shift, zoom, flip)
+- Apply data augmentation (rotation, shift, zoom, horizontal flip)
 
 These steps help improve generalization and reduce overfitting.
 
+---
+
 ## 🧠 Model Architecture
 
-- **Base Model**: VGG19 (pretrained on ImageNet, top layers removed)
-- **Custom Head**:
+- **Base Model**: VGG19 (ImageNet pretrained, top layers removed)
+- **Custom Classification Head**:
   - Flatten
   - Dense (512, ReLU) + Dropout
   - Dense (128, ReLU)
@@ -65,7 +85,7 @@ These steps help improve generalization and reduce overfitting.
 
 **Phase 1 – Transfer Learning**
 - VGG19 layers frozen
-- Only classifier layers trained
+- Classifier layers trained
 - Adam optimizer (lr = 1e-4)
 
 **Phase 2 – Fine-Tuning**
@@ -73,39 +93,47 @@ These steps help improve generalization and reduce overfitting.
 - Lower learning rate (1e-5)
 - Early stopping and learning-rate scheduling applied
 
+---
+
 ## 📈 Model Performance (Test Set)
 
 - **Final Test Accuracy**: 91.67%
 - **Final Test Loss**: 0.2557
 
-### Classification Highlights
+### Key Observations
 
 - **Pneumonia Recall**: ~95%
-- Fewer missed pneumonia cases after fine-tuning
-- Acceptable trade-off between false positives and false negatives
+- Reduced false negatives after fine-tuning
+- Balanced trade-off between sensitivity and specificity
 
-## 🌐 Web Application (Inference)
+---
 
-### Prediction Flow
+## 🌐 Web Application & Deployment
+
+### Inference Flow
 
 1. User uploads a chest X-ray image
 2. Image is resized and normalized
-3. Trained CNN performs inference (no retraining)
-4. Prediction and confidence score are displayed
+3. Pretrained CNN performs inference (no retraining)
+4. Prediction label and confidence score are displayed
 
-### Tech Stack
+### Deployment Details
 
-- **Backend**: Flask, TensorFlow/Keras
+- **Backend**: Flask, TensorFlow / Keras
 - **Frontend**: HTML, CSS, JavaScript
+- **Containerization**: Docker
+- **Hosting**: Hugging Face Spaces (CPU Basic – Free tier)
+- **Model Hosting**: Hugging Face Hub (downloaded at runtime)
+
+---
 
 ## 📁 Project Structure
-
 ```
 pneumonia-detection/
 │
-├── app.py                  # Flask app (inference)
-├── pneumonia.ipynb         # Training & evaluation notebook
-├── model.h5                # Trained CNN model
+├── main.py                    # Flask application (inference)
+├── Dockerfile                 # Docker configuration
+├── requirements.txt
 │
 ├── templates/
 │   ├── index.html
@@ -114,22 +142,13 @@ pneumonia-detection/
 ├── static/
 │   └── style.css
 │
-├── requirements.txt
+├── training_notebook.ipynb    # Model training & evaluation (Kaggle)
 └── README.md
 ```
 
-## 🚀 How to Run Locally
+> ⚠️ Trained model files are **not stored in the repo** and are fetched from the Hugging Face Hub at runtime.
 
-```bash
-pip install -r requirements.txt
-python app.py
-```
-
-Open in browser:
-
-```
-http://localhost:8080
-```
+---
 
 ## 🛠️ Tools & Technologies
 
@@ -138,24 +157,27 @@ http://localhost:8080
 - Convolutional Neural Networks (CNN)
 - Transfer Learning (VGG19)
 - Flask
+- Docker
+- Hugging Face Spaces
 - NumPy, Pandas
 - Matplotlib, Seaborn
 - HTML, CSS, JavaScript
 
+---
 
-## 📬 Support
+## 📬 Contact & Support
 
-For questions, feedback, or contributions:
-
-- **GitHub**: ('https://github.com/siddharthpandey-7/Pneumonia_Detection_Using_DeepLearning.git')
-- **Email**: (siddharthpandey97825@gmail.com)
-- **LinkedIn**: (https://www.linkedin.com/in/siddharth-kumar-pandey-003065343/)
+- **GitHub**: https://github.com/siddharthpandey-7/Pneumonia_Detection
+- **Email**: siddharthpandey97825@gmail.com
+- **LinkedIn**: https://www.linkedin.com/in/siddharth-kumar-pandey-003065343/
 
 Feel free to ⭐ this repository if you find it helpful!
 
+---
 
 ## ⚠️ Disclaimer
 
-This project is not a medical device and should not be used for real-world diagnosis. It is intended strictly for learning, experimentation, and ML practice.
+This project is **not a medical device** and must **not** be used for real-world diagnosis.  
+It is intended strictly for **learning, experimentation, and ML practice**.
 
-**Built with ❤️ for better healthcare through AI**
+**Built with ❤️ for learning and applied AI in healthcare**
