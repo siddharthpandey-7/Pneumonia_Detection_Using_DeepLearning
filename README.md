@@ -10,7 +10,6 @@ The trained model is deployed as a **Flask web application** using **Docker** on
 🔗 **Deployed Application (Free):**  
 https://siddharthpandey7-pneumonia-detection-flask.hf.space
 
-> ⚠️ Note: The app may take 30–60 seconds to load on first request due to cold start (free-tier behavior).
 
 ---
 
